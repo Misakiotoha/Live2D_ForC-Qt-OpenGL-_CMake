@@ -1,0 +1,4 @@
+F:/Misaki Codes/C Project/C++ Project/ByClion/Airi_DesktopGril/cmake-build-debug/CMakeFiles/Airi_DesktopGril.dir
+F:/Misaki Codes/C Project/C++ Project/ByClion/Airi_DesktopGril/cmake-build-debug/CMakeFiles/edit_cache.dir
+F:/Misaki Codes/C Project/C++ Project/ByClion/Airi_DesktopGril/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+F:/Misaki Codes/C Project/C++ Project/ByClion/Airi_DesktopGril/cmake-build-debug/CMakeFiles/Airi_DesktopGril_autogen.dir

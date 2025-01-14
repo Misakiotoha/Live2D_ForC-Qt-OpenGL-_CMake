@@ -1,0 +1,116 @@
+cmake_minimum_required(VERSION 3.26)
+project(Airi_DesktopGril)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+set(CMAKE_PREFIX_PATH "E:/QT5.12.12/5.12.12/mingw73_64")
+
+# 设置是否为debug模式
+set(D_OR_R ON)  # ON为Debug
+
+# 是否开启控制台调试输出
+set(CONSOLE ON) # ON为启用
+
+# 设置渲染方式，选择为OpenGL，不然默认是Cocos2d，编译包报错的，CMake也会给你警告的
+set(FRAMEWORK_SOURCE OpenGL)
+
+# 查找Live2D的所有src文件
+file(GLOB LappLive "LAppLive2D/Src/*.cpp")
+
+# 添加库文件搜索路径
+link_directories(
+        "${CMAKE_SOURCE_DIR}/Lib/Debug/"
+)
+
+find_package(Qt5 COMPONENTS
+        Core
+        Gui
+        Widgets
+        Network
+        OpenGL
+        SerialPort
+        Sql
+        Svg
+        WebChannel
+        WebSockets
+        REQUIRED)
+
+if (NOT CONSOLE)
+    set(CON WIN32)
+endif ()
+add_executable(Airi_DesktopGril ${CON} main.cpp GLCore.cpp "${LappLive}")
+# message(STATUS ${CON})
+target_link_libraries(Airi_DesktopGril
+        Framework
+        libglew32d.dll
+        glfw3
+        Live2DCubismCore_d
+        opengl32
+        glu32
+        Qt5::Core
+        Qt5::Gui
+        Qt5::Widgets
+        Qt5::Network
+        Qt5::OpenGL
+        Qt5::SerialPort
+        Qt5::Sql
+        Qt5::Svg
+        Qt5::WebChannel
+        Qt5::WebSockets
+)
+
+# 链接所需要的库文件
+
+
+# 添加头文件搜索路径
+include_directories(
+        ./
+        LAppLive2D/Inc
+        Thirdparty/Framework/src
+        Thirdparty/Core/include
+        Thirdparty/glew/include
+        Thirdparty/glew/include/GL
+        Thirdparty/glfw/include
+        Thirdparty/glfw/include/GLFW
+        Thirdparty/stb
+)
+
+# 添加库文件搜索路径
+link_directories(
+        "${CMAKE_SOURCE_DIR}/Lib/Debug/"
+)
+#message(STATUS CSD: "${CMAKE_SOURCE_DIR}/Lib/Debug/")
+
+
+
+if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(DEBUG_SUFFIX)
+    if (MSVC AND CMAKE_BUILD_TYPE MATCHES "Debug")
+        set(DEBUG_SUFFIX "d")
+    endif ()
+    set(QT_INSTALL_PATH "${CMAKE_PREFIX_PATH}")
+    if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
+        set(QT_INSTALL_PATH "${QT_INSTALL_PATH}/..")
+        if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
+            set(QT_INSTALL_PATH "${QT_INSTALL_PATH}/..")
+        endif ()
+    endif ()
+    if (EXISTS "${QT_INSTALL_PATH}/plugins/platforms/qwindows${DEBUG_SUFFIX}.dll")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins/platforms/")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                "${QT_INSTALL_PATH}/plugins/platforms/qwindows${DEBUG_SUFFIX}.dll"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins/platforms/")
+    endif ()
+    foreach (QT_LIB Core Gui Widgets)
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                "${QT_INSTALL_PATH}/bin/Qt5${QT_LIB}${DEBUG_SUFFIX}.dll"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
+    endforeach (QT_LIB)
+endif ()
