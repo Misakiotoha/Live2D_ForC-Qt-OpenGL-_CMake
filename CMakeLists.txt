@@ -62,9 +62,6 @@ target_link_libraries(Airi_DesktopGril
         Qt5::WebSockets
 )
 
-# 链接所需要的库文件
-
-
 # 添加头文件搜索路径
 include_directories(
         ./
@@ -85,6 +82,35 @@ link_directories(
 #message(STATUS CSD: "${CMAKE_SOURCE_DIR}/Lib/Debug/")
 
 
+# 复制Resources目录到生成目录cmake-build-debug
+file(GLOB RESOURCE_W "${CMAKE_BINARY_DIR}/Resources")
+#message(STATUS RW: ${RESOURCE_W})
+if (NOT RESOURCE_W) # 如果没有这个Resources目录就复制过去
+    file(COPY
+            "${CMAKE_SOURCE_DIR}/Resources"
+            DESTINATION
+            "${CMAKE_BINARY_DIR}/"
+    )
+endif ()
+
+# 复制库文件中的dll文件到生成目录cmake-build-debug
+file(GLOB GLEW_DLL_W "${CMAKE_BINARY_DIR}/glew32d.dll")
+file(GLOB LIVE2D_DLL_W "${CMAKE_BINARY_DIR}/Live2DCubismCore.dll")
+if (NOT GLEW_DLL_W)
+    file(COPY
+            "${CMAKE_SOURCE_DIR}/Lib/Debug/glew32d.dll"
+            DESTINATION
+            "${CMAKE_BINARY_DIR}/"
+    )
+endif ()
+
+if (NOT LIVE2D_DLL_W)
+    file(COPY
+            "${CMAKE_SOURCE_DIR}/Lib/Debug/Live2DCubismCore.dll"
+            DESTINATION
+            "${CMAKE_BINARY_DIR}/"
+    )
+endif ()
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(DEBUG_SUFFIX)
